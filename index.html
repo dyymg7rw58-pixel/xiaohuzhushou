@@ -440,6 +440,18 @@
     <div class="toast" id="toast"></div>
 
     <script>
+        // ── 注册 Service Worker（带时间戳防缓存） ──
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js?v=' + Date.now()).then(() => {
+                // 注册成功后，通知 Service Worker 跳过等待并刷新页面
+                navigator.serviceWorker.ready.then(reg => {
+                    if (reg.active) {
+                        reg.active.postMessage('skipWaiting');
+                    }
+                });
+            });
+        }
+
         // ── 翻译 API ──
         async function translateText() {
             const input = document.getElementById('inputText');
