@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="小胡助手">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌐</text></svg>">
+    <title>小胡助手</title>
+    <style>
+        /* ── 主题配色（与桌面版一致） ── */
+        :root {
+            --bg: #F0F4F8;
+            --card-bg: #FFFFFF;
+            --primary: #4A90D9;
+            --primary-hover: #357ABD;
+            --secondary: #7C3AED;
+            --text: #1A202C;
+            --text-secondary: #718096;
+            --border: #E2E8F0;
+            --input-bg: #F7FAFC;
+            --success: #48BB78;
+            --radius: 12px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 16px;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            max-width: 480px;
+            margin: 0 auto;
+        }
+
+        /* ── 标题栏 ── */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 12px;
+            padding: 0 4px;
+        }
+        .header h1 {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text);
+        }
+        .header .hint {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        /* ── 卡片 ── */
+        .card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            padding: 16px;
+            margin-bottom: 10px;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .card-header label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text);
+        }
+        .card-header .badge {
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+
+        /* ── 语言选择行 ── */
+        .lang-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .lang-label {
+            font-size: 13px;
+            color: var(--text-secondary);
+            white-space: nowrap;
+        }
+        .lang-row select {
+            flex: 1;
+            padding: 10px 12px;
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            font-size: 15px;
+            background: var(--input-bg);
+            color: var(--text);
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23718096' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .lang-row select:focus {
+            border-color: var(--primary);
+        }
+        .swap-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 1.5px solid var(--border);
+            background: var(--card-bg);
+            color: var(--primary);
+            font-size: 18px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            flex-shrink: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .swap-btn:active {
+            background: var(--primary);
+            color: white;
+            transform: scale(0.9);
+        }
+
+        /* ── 文本框 ── */
+        textarea {
+            width: 100%;
+            min-height: 100px;
+            padding: 12px;
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            font-size: 15px;
+            line-height: 1.5;
+            background: var(--input-bg);
+            color: var(--text);
+            resize: none;
+            outline: none;
+            transition: border-color 0.2s;
+            font-family: inherit;
+        }
+        textarea:focus {
+            border-color: var(--primary);
+        }
+        textarea::placeholder {
+            color: #A0AEC0;
+        }
+        textarea[readonly] {
+            background: #FAFBFC;
+        }
+
+        /* ── 翻译按钮（圆角，与桌面版一致） ── */
+        .translate-btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: var(--radius);
+            background: var(--primary);
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            margin-bottom: 10px;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .translate-btn:active {
+            background: var(--primary-hover);
+            transform: scale(0.98);
+        }
+        .translate-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .translate-btn .spinner {
+            display: none;
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+        }
+        .translate-btn.loading .spinner {
+            display: inline-block;
+        }
+        .translate-btn.loading .btn-text {
+            display: none;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* ── 操作按钮行 ── */
+        .actions {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+        .actions button {
+            flex: 1;
+            padding: 10px;
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            background: var(--card-bg);
+            color: var(--text-secondary);
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .actions button:active {
+            background: var(--input-bg);
+            transform: scale(0.97);
+        }
+
+        /* ── 结果区复制按钮 ── */
+        .result-wrapper {
+            position: relative;
+        }
+        .copy-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            padding: 6px 12px;
+            border: none;
+            border-radius: 8px;
+            background: var(--card-bg);
+            color: var(--text-secondary);
+            font-size: 12px;
+            cursor: pointer;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            transition: all 0.2s;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .copy-btn:active {
+            background: var(--primary);
+            color: white;
+        }
+        .copy-btn.copied {
+            background: var(--success);
+            color: white;
+        }
+
+        /* ── 状态栏 ── */
+        .status {
+            text-align: right;
+            font-size: 12px;
+            color: var(--text-secondary);
+            padding: 0 4px;
+            min-height: 18px;
+        }
+
+        /* ── Toast 提示 ── */
+        .toast {
+            position: fixed;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 13px;
+            opacity: 0;
+            transition: all 0.3s;
+            pointer-events: none;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* ── iOS 安全区域 ── */
+        @supports (padding-top: env(safe-area-inset-top)) {
+            body {
+                padding-top: calc(16px + env(safe-area-inset-top));
+                padding-bottom: calc(16px + env(safe-area-inset-bottom));
+            }
+        }
+
+        /* ── 暗色模式 ── */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg: #1A202C;
+                --card-bg: #2D3748;
+                --text: #E2E8F0;
+                --text-secondary: #A0AEC0;
+                --border: #4A5568;
+                --input-bg: #1A202C;
+            }
+            textarea[readonly] {
+                background: #1A202C;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 标题栏 -->
+        <div class="header">
+            <h1>🌐 小胡助手</h1>
+            <span class="hint">轻量 · 免费</span>
+        </div>
+
+        <!-- 语言选择卡片 -->
+        <div class="card">
+            <div class="lang-row">
+                <span class="lang-label">从</span>
+                <select id="srcLang">
+                    <option value="auto">🌍 自动检测</option>
+                    <option value="zh-Hans">🇨🇳 中文</option>
+                    <option value="en">🇺🇸 英语</option>
+                    <option value="ja">🇯🇵 日语</option>
+                    <option value="ko">🇰🇷 韩语</option>
+                    <option value="fr">🇫🇷 法语</option>
+                    <option value="de">🇩🇪 德语</option>
+                    <option value="es">🇪🇸 西班牙语</option>
+                    <option value="ru">🇷🇺 俄语</option>
+                    <option value="pt">🇵🇹 葡萄牙语</option>
+                    <option value="it">🇮🇹 意大利语</option>
+                    <option value="ar">🇸🇦 阿拉伯语</option>
+                    <option value="th">🇹🇭 泰语</option>
+                    <option value="vi">🇻🇳 越南语</option>
+                </select>
+                <button class="swap-btn" id="swapBtn">⇄</button>
+                <span class="lang-label">到</span>
+                <select id="tgtLang">
+                    <option value="zh-Hans">🇨🇳 中文</option>
+                    <option value="en">🇺🇸 英语</option>
+                    <option value="ja">🇯🇵 日语</option>
+                    <option value="ko">🇰🇷 韩语</option>
+                    <option value="fr">🇫🇷 法语</option>
+                    <option value="de">🇩🇪 德语</option>
+                    <option value="es">🇪🇸 西班牙语</option>
+                    <option value="ru">🇷🇺 俄语</option>
+                    <option value="pt">🇵🇹 葡萄牙语</option>
+                    <option value="it">🇮🇹 意大利语</option>
+                    <option value="ar">🇸🇦 阿拉伯语</option>
+                    <option value="th">🇹🇭 泰语</option>
+                    <option value="vi">🇻🇳 越南语</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- 输入区 -->
+        <div class="card">
+            <div class="card-header">
+                <label>📝 输入文本</label>
+                <span class="badge" id="charCount">0 字</span>
+            </div>
+            <textarea id="inputText" placeholder="请输入要翻译的文本..." oninput="updateCharCount()"></textarea>
+        </div>
+
+        <!-- 翻译按钮 -->
+        <button class="translate-btn" id="translateBtn" onclick="translateText()">
+            <span class="spinner"></span>
+            <span class="btn-text">✨ 翻译</span>
+        </button>
+
+        <!-- 操作按钮 -->
+        <div class="actions">
+            <button onclick="clearAll()">🗑️ 清空</button>
+            <button onclick="pasteText()">📋 粘贴</button>
+            <button onclick="speakInput()">🔊 朗读</button>
+        </div>
+
+        <!-- 结果区 -->
+        <div class="card">
+            <div class="card-header">
+                <label>✅ 翻译结果</label>
+                <span class="badge" id="resultHint">等待翻译</span>
+            </div>
+            <div class="result-wrapper">
+                <textarea id="outputText" placeholder="翻译结果将显示在这里..." readonly></textarea>
+                <button class="copy-btn" id="copyBtn" onclick="copyResult()">📋 复制</button>
+            </div>
+        </div>
+
+        <!-- 状态栏 -->
+        <div class="status" id="status">💡 就绪</div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // ── 翻译 API ──
+        async function translateText() {
+            const input = document.getElementById('inputText');
+            const output = document.getElementById('outputText');
+            const btn = document.getElementById('translateBtn');
+            const status = document.getElementById('status');
+            const text = input.value.trim();
+
+            if (!text) {
+                showToast('⚠️ 请输入要翻译的文本');
+                return;
+            }
+
+            const src = document.getElementById('srcLang').value;
+            const tgt = document.getElementById('tgtLang').value;
+
+            if (src === tgt) {
+                showToast('⚠️ 源语言和目标语言相同');
+                return;
+            }
+
+            btn.classList.add('loading');
+            btn.disabled = true;
+            status.textContent = '🔄 翻译中...';
+
+            try {
+                const result = await translateWithBing(text, src, tgt);
+                output.value = result;
+                status.textContent = '✅ 翻译完成';
+                document.getElementById('resultHint').textContent = '已翻译';
+            } catch (e) {
+                console.error('Bing failed, trying Baidu...', e);
+                try {
+                    const result = await translateWithBaidu(text, tgt);
+                    output.value = result;
+                    status.textContent = '✅ 翻译完成';
+                    document.getElementById('resultHint').textContent = '已翻译';
+                } catch (e2) {
+                    console.error('All translators failed', e2);
+                    status.textContent = '❌ 翻译失败，请检查网络';
+                    showToast('❌ 翻译失败，请检查网络连接');
+                }
+            } finally {
+                btn.classList.remove('loading');
+                btn.disabled = false;
+            }
+        }
+
+        async function translateWithBing(text, src, tgt) {
+            const tokenResp = await fetch('https://edge.microsoft.com/translate/auth', {
+                headers: {
+                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+                }
+            });
+            const token = await tokenResp.text();
+
+            const params = new URLSearchParams({ 'api-version': '3.0', 'to': tgt });
+            if (src !== 'auto') params.append('from', src);
+
+            const resp = await fetch(`https://api.cognitive.microsofttranslator.com/translate?${params}`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+                },
+                body: JSON.stringify([{ Text: text }])
+            });
+
+            const data = await resp.json();
+            if (data && data[0] && data[0].translations && data[0].translations[0]) {
+                return data[0].translations[0].text;
+            }
+            throw new Error('Bing 返回格式异常');
+        }
+
+        async function translateWithBaidu(text, tgt) {
+            const resp = await fetch('https://fanyi.baidu.com/sug', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+                    'Referer': 'https://fanyi.baidu.com/'
+                },
+                body: new URLSearchParams({ kw: text })
+            });
+
+            const data = await resp.json();
+            if (data.errno === 0 && data.data && data.data.length > 0) {
+                return data.data[0].v;
+            }
+            throw new Error('百度翻译返回为空');
+        }
+
+        // ── 辅助功能 ──
+        function updateCharCount() {
+            const count = document.getElementById('inputText').value.length;
+            document.getElementById('charCount').textContent = count + ' 字';
+        }
+
+        function clearAll() {
+            document.getElementById('inputText').value = '';
+            document.getElementById('outputText').value = '';
+            document.getElementById('status').textContent = '💡 已清空';
+            document.getElementById('resultHint').textContent = '等待翻译';
+            updateCharCount();
+        }
+
+        async function pasteText() {
+            try {
+                const text = await navigator.clipboard.readText();
+                document.getElementById('inputText').value = text;
+                updateCharCount();
+                showToast('📋 已粘贴');
+            } catch {
+                showToast('⚠️ 无法读取剪贴板');
+            }
+        }
+
+        function speakInput() {
+            const text = document.getElementById('inputText').value.trim();
+            if (!text) {
+                showToast('⚠️ 没有可朗读的文本');
+                return;
+            }
+            const src = document.getElementById('srcLang').value;
+            const langMap = {
+                'zh-Hans': 'zh-CN', 'en': 'en-US', 'ja': 'ja-JP', 'ko': 'ko-KR',
+                'fr': 'fr-FR', 'de': 'de-DE', 'es': 'es-ES', 'ru': 'ru-RU',
+                'pt': 'pt-PT', 'it': 'it-IT', 'ar': 'ar-SA', 'th': 'th-TH', 'vi': 'vi-VN'
+            };
+            const lang = langMap[src] || 'en-US';
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = lang;
+            utterance.rate = 0.9;
+            speechSynthesis.speak(utterance);
+            showToast('🔊 正在朗读...');
+        }
+
+        async function copyResult() {
+            const text = document.getElementById('outputText').value;
+            if (!text) {
+                showToast('⚠️ 没有可复制的内容');
+                return;
+            }
+            try {
+                await navigator.clipboard.writeText(text);
+                const btn = document.getElementById('copyBtn');
+                btn.textContent = '✅ 已复制';
+                btn.classList.add('copied');
+                setTimeout(() => {
+                    btn.textContent = '📋 复制';
+                    btn.classList.remove('copied');
+                }, 2000);
+                showToast('📋 已复制到剪贴板');
+            } catch {
+                showToast('⚠️ 复制失败');
+            }
+        }
+
+        // ── 语言交换 ──
+        document.getElementById('swapBtn').addEventListener('click', function() {
+            const src = document.getElementById('srcLang');
+            const tgt = document.getElementById('tgtLang');
+            if (src.value === 'auto') {
+                showToast('⚠️ 自动检测不能作为目标语言');
+                return;
+            }
+            const tmp = src.value;
+            src.value = tgt.value;
+            tgt.value = tmp;
+
+            const input = document.getElementById('inputText');
+            const output = document.getElementById('outputText');
+            const tmpText = input.value;
+            input.value = output.value;
+            output.value = tmpText;
+            updateCharCount();
+        });
+
+        // ── Toast ──
+        let toastTimer;
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.classList.add('show');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => toast.classList.remove('show'), 2000);
+        }
+
+        // ── 键盘快捷键 ──
+        document.addEventListener('keydown', function(e) {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                e.preventDefault();
+                translateText();
+            }
+        });
+
+        // ── 自动调整输入框高度 ──
+        document.getElementById('inputText').addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = Math.min(this.scrollHeight, 200) + 'px';
+        });
+    </script>
+</body>
+</html>
