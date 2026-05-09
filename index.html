@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="小胡助手">
+    <meta name="apple-mobile-web-app-title" content="小胡！到！">
     <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌐</text></svg>">
-    <title>小胡助手</title>
+    <title>小胡！到！</title>
     <style>
         /* ── 主题配色（与桌面版一致） ── */
         :root {
@@ -28,40 +28,39 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'PingFang SC', 'Microsoft YaHei', sans-serif;
-            background: var(--bg);
+            background: #000000;
             color: var(--text);
             min-height: 100vh;
             padding: 16px;
             -webkit-font-smoothing: antialiased;
             background-image: url('bg.jpg');
-            background-size: contain;
+            background-size: cover;
             background-position: top center;
             background-attachment: fixed;
             background-repeat: no-repeat;
-            background-color: #1a202c;
-        }
-
-        /* 背景图片上的半透明遮罩，确保内容可读性 */
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.08);
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        .container {
-            position: relative;
-            z-index: 1;
         }
 
         .container {
             max-width: 480px;
             margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* 底部装饰图片 - 两个人物（小胡、小阳） */
+        .bottom-image {
+            width: 100%;
+            max-width: 480px;
+            margin: 0 auto;
+            display: block;
+            border-radius: 0 0 var(--radius) var(--radius);
+            margin-top: -1px;
+        }
+        .bottom-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 0 0 var(--radius) var(--radius);
         }
 
         /* ── 标题栏 ── */
@@ -75,11 +74,11 @@
         .header h1 {
             font-size: 22px;
             font-weight: 700;
-            color: var(--text);
+            color: #ffffff;
         }
         .header .hint {
             font-size: 12px;
-            color: var(--text-secondary);
+            color: rgba(255, 255, 255, 0.6);
         }
 
         /* ── 卡片 ── */
@@ -354,7 +353,7 @@
     <div class="container">
         <!-- 标题栏 -->
         <div class="header">
-            <h1>🌐 小胡助手</h1>
+            <h1>🌐 小胡！到！</h1>
             <span class="hint">轻量 · 免费</span>
         </div>
 
@@ -434,6 +433,11 @@
 
         <!-- 状态栏 -->
         <div class="status" id="status">💡 就绪</div>
+
+        <!-- 底部装饰图片（小胡、小阳） -->
+        <div class="bottom-image">
+            <img src="characters.png" alt="小胡小阳">
+        </div>
     </div>
 
     <!-- Toast -->
