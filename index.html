@@ -445,11 +445,15 @@
     <script>
         // ── 注册 Service Worker ──
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('sw.js?v=' + Date.now()).then(() => {
-                navigator.serviceWorker.ready.then(reg => {
-                    if (reg.active) {
-                        reg.active.postMessage('skipWaiting');
-                    }
+            // 先注销所有旧的 Service Worker，确保新版本生效
+            navigator.serviceWorker.getRegistrations().then(registrations => {
+                for (let registration of registrations) {
+                    registration.unregister();
+                }
+            }).then(() => {
+                // 重新注册新的 Service Worker
+                navigator.serviceWorker.register('sw.js?v=' + Date.now()).catch(err => {
+                    console.warn('Service Worker 注册失败（不影响使用）:', err);
                 });
             });
         }
